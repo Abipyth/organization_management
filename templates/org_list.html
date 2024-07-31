@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Organizations List</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        {% include 'nav.html' %}
+        <h1>Organizations List</h1>
+        {% include 'msg_tag.html' %}
+        <table class="organization-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    {% if is_super_admin or is_admin %}
+                        <th>Actions</th>
+                        <th>Roles</th>
+                        <th>Users</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for organization in organizations %}
+                    <tr>
+                        <td>{{ organization.name }}</td>
+                        <td>{{ organization.description }}</td>
+                        {% if is_super_admin or is_admin %}
+                            <td>
+                                <a href="{% url 'update_organization' organization.id %}">Update</a>
+                                <a href="{% url 'delete_organization' organization.id %}">Delete</a>
+                               <td> <a href="{% url 'create_role' organization.id %}">Add</a>
+                                <a href="{% url 'role_list' organization.id %}">View</a></td>
+                                
+                            </td>
+                            <td><a href="{% url 'user_list' organization.id %}">View</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

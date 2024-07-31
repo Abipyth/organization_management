@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Create Role</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="centered-container">
+        {% include 'nav.html' %}
+        <h1>Create Role for {{ organization.name }}</h1>
+        {% include 'msg_tag.html' %}
+        <center>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                
+                <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="name">
+            </div>
+            <div class="form-group">
+                
+                <textarea id="description" name="description" class="form-control form-control-lg" placeholder="description"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Role</button>
+        </form>
+    </center>
+    </div>
+</body>
+</html>
