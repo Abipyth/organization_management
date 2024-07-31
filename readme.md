@@ -4,35 +4,35 @@ Organization Management System
 
 1. Clone the repository:
     
-    git clone the repository
+    git clone https://github.com/Abipyth/organization_management.git
     cd your-repository
-    ```
+
 
 2. Set up a virtual environment:
     
     python -m venv venv
      use `venv\Scripts\activate`
-    ```
+
 
 3. Install the required packages:
     
     pip install -r requirements.txt
-    ```
+    
 
 4. Apply migrations:
     python manage.py makemigrations
     python manage.py migrate
-    ```
+    
 
 5. Create a superuser (if needed):
     
     python manage.py createsuperuser
-    ```
+    
 
 6. Run the development server:
     
     python manage.py runserver
-    ```
+    
 
 ## Usage
 
