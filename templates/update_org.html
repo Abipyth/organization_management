@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>Update Organization</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="centered-container">
+        {% include 'nav.html' %}
+        <h1>Update Organization</h1>
+        {% include 'msg_tag.html' %}
+        <center>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control form-control-lg" value="{{ organization.name }}">
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" class="form-control form-control-lg">{{ organization.description }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Organization</button>
+        </form>
+    </center>
+    </div>
+</body>
+</html>

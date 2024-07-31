@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Users in {{ organization.name }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        {% include 'nav.html' %}
+        <h1>Users in {{ organization.name }}</h1>
+        
+        {% include 'msg_tag.html' %}
+        <table class="role-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                 <!--   <th>Role Name</th>-->
+                    {% if is_super_admin or is_admin %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.email }}</td>
+                    <!--   <td>
+                            {% if user.roles.all %}
+                                {% for role in user.roles.all %}
+                                    {{ role.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                No roles assigned
+                            {% endif %}
+                        </td>--> 
+                        {% if is_super_admin or is_admin %}
+                            <td>
+                                <a href="{% url 'user_update' user.id %}" >Update</a>
+                                <a href="{% url 'user_delete' user.id %}" >Delete</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</body>
+</html>

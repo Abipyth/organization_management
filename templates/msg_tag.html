@@ -1,0 +1,30 @@
+{% if messages %}
+<center>
+<div>
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+</div></center>
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to add fade-out class to alerts
+        function fadeOutAlerts() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                }, 10000); // Delay before starting fade-out (10 seconds)
+            });
+        }
+
+        // Call function to fade out alerts
+        fadeOutAlerts();
+    });
+</script>

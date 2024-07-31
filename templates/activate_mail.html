@@ -1,0 +1,10 @@
+{% autoescape off %}
+
+Hi {{user.username}}
+
+Click below link to activate your Account with Homestay
+
+http://{{domain}}{% url "activate" uidb64=uid token=token %}
+
+
+{% endautoescape %}

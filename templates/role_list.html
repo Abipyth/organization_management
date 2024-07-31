@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roles in {{ organization.name }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        {% include 'nav.html' %}
+        <h1>Roles in {{ organization.name }}</h1>
+    
+        {% include 'msg_tag.html' %}
+        <table class="role-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    {% if is_super_admin or is_admin %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for role in roles %}
+                    <tr>
+                        <td>{{ role.name }}</td>
+                        <td>{{ role.description }}</td>
+                        <td>
+                            <a href="{% url 'update_role' role.id %}">Update</a>
+                            <a href="{% url 'delete_role' role.id %}">Delete</a>
+                            <a href="{% url 'create_role' organization.id %}">Create</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</body>
+</html>
