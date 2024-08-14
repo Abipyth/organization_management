@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEW PASSWORD SET</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <center>
+        <div class="centered-container">
+            {% include 'nav.html' %}
+        <h1>NEW PASSWORD SETTING FORM</h1>
+     
+      <!----------  <form action="/set_new_pw/<uidb64>/<token>" method="post">---------->   
+         <form action="{% url 'set_new_pw' uidb64 token %}" method="post"> 
+            {%  csrf_token %}
+            {% include 'msg_tag.html' %}
+            <div class="row">
+                <div class="col-md-6 mb-4 d-flex align-items-center">
+                    <div class="form-outline datepicker w-100">
+                        <input type="password" name="pass1" class="form-control form-control-lg" placeholder="PASSWORD">
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4 d-flex align-items-center">
+                    <div class="form-outline datepicker w-100">
+                        <input type="password" name="pass2" class="form-control form-control-lg" placeholder="CONFIRM PASSWORD">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-0 pt-0">
+                <center><input class="btn btn-primary btn-lg" type="submit" value="Reset" /></center>
+            </div> 
+            <br>
+        </form>
+        <p> <a href="/in"> Go Back?</a></p>
+    </div>
+    </center>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reset Form</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body><center>
+    <div class="centered-container">
+        {% include 'nav.html' %}
+        <h1>Password Reset Form</h1>
+        <form action="/req_reset_pw" method="post">
+            {% csrf_token %}
+            {% include 'msg_tag.html' %}
+         
+
+        <div class="row">
+            <div class="col-md-6 mb-4 d-flex align-items-center">
+                <div class="form-outline datepicker w-100">
+                    <input type="email" class="form-control form-control-lg" placeholder="email" name="email">
+                </div>
+            </div>
+
+            <div class="mt-0 pt-0">
+            <center><input class="btn btn-primary btn-lg" type="submit" value="RESET" /></center>
+            </div> 
+
+            <p> <a href="/in"> Go Back?</a></p>
+        </div>
+        </form>
+        </div>
+        
+        
+    </center>
+    
+</body>
+</html>
