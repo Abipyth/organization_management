@@ -26,4 +26,7 @@ urlpatterns = [
     path('users/update/<int:user_id>/', views.user_update, name='user_update'),
     path('roles/delete/<int:role_id>/', views.delete_role, name='delete_role'),
     path('users/delete/<int:user_id>/', views.delete_user, name='user_delete'),
+        ### password reset
+    path("req_reset_pw", views.ReqResetPWView.as_view(), name="req_reset_pw"),
+    path("set_new_pw/<uidb64>/<token>",views.SetNewPWView.as_view(), name="set_new_pw" ),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
