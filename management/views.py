@@ -3,7 +3,7 @@ from .models import *
 from django.contrib import messages
 from django.contrib.auth.models import User,Group
 from django.contrib.auth import login,logout,authenticate
-from django.views.decorators.csrf import csrf_exempt
+#from django.views.decorators.csrf import csrf_exempt ## if testing api using postman
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_decode,urlsafe_base64_encode
@@ -159,7 +159,7 @@ def is_manager(user):
     return user.groups.filter(name='manager').exists()
 def is_member(user):
     return user.groups.filter(name='member').exists()
-
+## create organizations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def create_organization(request):
@@ -183,8 +183,7 @@ def create_organization(request):
         return redirect('organization_list')
 
     return render(request, 'create_org.html')
-
-
+## update organisations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def update_organization(request, org_id):
@@ -210,8 +209,7 @@ def update_organization(request, org_id):
 
     context = {'organization': organization}
     return render(request, 'update_org.html', context)
-
-
+## view organizations
 def organization_list(request):
     organizations = Organization.objects.all()
     is_super_admin = request.user.groups.filter(name='super admin').exists()
@@ -223,7 +221,7 @@ def organization_list(request):
         'is_admin': is_admin,
     }
     return render(request, 'org_list.html', context)
-
+## update organizations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def delete_organization(request, org_id):
@@ -241,8 +239,7 @@ def delete_organization(request, org_id):
 
     return redirect('organization_list')
 
-
-################ROLE###################
+################ROLE################### Create roles in organizations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def create_role(request, org_id):
@@ -266,7 +263,7 @@ def create_role(request, org_id):
 
     context = {'organization': organization}
     return render(request, 'create_role.html', context)
-
+##update roles in organizations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def update_role(request, role_id):
@@ -293,7 +290,7 @@ def update_role(request, role_id):
 
     context = {'role': role, 'organization': organization}
     return render(request, 'update_role.html', context)
-
+## delete roles in organizations
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 @login_required
 def delete_role(request, role_id):
@@ -311,7 +308,7 @@ def delete_role(request, role_id):
         messages.info(request, 'You do not have permission to delete this role.')
 
     return redirect('role_list', org_id=organization.id)
-
+## view roles in organizations
 @login_required
 def role_list(request, org_id):
     organization = get_object_or_404(Organization, id=org_id)
@@ -324,7 +321,7 @@ def role_list(request, org_id):
                 'is_admin': is_admin,}
     return render(request, 'role_list.html', context)
 
-
+#########USER REGISTRATION ######## Create users in organizations
 @login_required
 def user_list(request, org_id):
     organization = get_object_or_404(Organization, id=org_id)
@@ -337,7 +334,7 @@ def user_list(request, org_id):
                'is_super_admin': is_super_admin,
                 'is_admin': is_admin,}
     return render(request, 'users_list.html', context)
-
+## Update users in organizations
 @login_required
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 def user_update(request, user_id):
@@ -369,7 +366,7 @@ def user_update(request, user_id):
     context = {'user': user, 'organization': organization}
     return render(request, 'user_update.html', context)
 
-
+## delete users in organizations
 @login_required
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -386,3 +383,72 @@ def delete_user(request, user_id):
         messages.info(request, 'You do not have permission to delete this user.')
 
     return redirect('user_list', org_id=organization.id)
+
+#### class based function for #######resetting the password#######
+class ReqResetPWView(View):
+    def get(self,request):
+        return render (request,"reset_pw_page.html")
+    
+    def post(self,request):
+        email=request.POST.get("email")
+        user=User.objects.filter(email=email)
+
+        if user.exists():
+            current_site=get_current_site(request)
+            email_sub="RESET YOUR PASSWORD"
+            msg=render_to_string("reset_pw_mail.html",
+                                 {
+                                     "user":user[0],
+                                     "domain":current_site.domain,
+                                     "uid":urlsafe_base64_encode(force_bytes(user[0].pk)),  ### hashing in string format in usrlsafebaseencode
+                                     "token":PasswordResetTokenGenerator().make_token(user[0])
+
+                                 })
+            email_msg=EmailMessage(email_sub,msg, settings.EMAIL_HOST_USER,[email])
+            EmailThread(email_msg).start()   #.start() is called on the EmailThread instance, which starts a new thread and executes the run method, sending the email asynchronously.
+            messages.info(request,"WE HAVE SENT YOU AN EMAIL FOR RESET THE PASSWORD")
+            return render (request,"reset_pw_page.html")
+## set new passowrd        
+class SetNewPWView(View):
+    def get(self,request,uidb64,token):
+        context={
+            "uidb64":uidb64,
+            "token": token
+
+        }
+        try:
+            u_id=force_str(urlsafe_base64_decode(uidb64))
+            user=User.objects.get(pk=u_id)
+            token=token
+
+            if not PasswordResetTokenGenerator.check_token(user,token):
+                messages.warning(request,"password reset link is invalid please try again")
+                return render (request,"reset_pw_page.html")
+            
+        except Exception as e:
+            print("error in get request", str(e))
+
+        return render (request,"set_new_pw.html",context)
+    
+    def post (self,request,uidb64,token):
+        context={
+            "uidb64":uidb64,
+            "token": token}
+        
+        pw=request.POST.get("pass1")
+        confirm_pw=request.POST.get("pass2")
+        if pw!=confirm_pw:
+            messages.warning(request,"password doesnt match enter correct password")
+            return render (request,"set_new_pw.html",context)
+        try:
+            u_id=force_str(urlsafe_base64_decode(uidb64))
+            user=User.objects.get(pk=u_id)
+            user.set_password(pw)
+            user.save()
+            messages.success(request, "password reset success please login with your new password")
+            return redirect (log)
+        except Exception as e:
+            messages.error(request,"something went wrong & error in saving the new password",str(e))
+            print("last error in saving the new password", str(e))
+            return render (request,"set_new_pw.html",context)
+        return render (request,"set_new_pw.html",context)
