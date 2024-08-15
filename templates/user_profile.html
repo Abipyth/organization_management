@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="centered-container">
+        {% include 'nav.html' %}
+        <center>
+    <h1>{{ profile.user.username }}'s Profile</h1>
+    <div class="form-group">
+        {% if user.profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="Avatar" width="200" height="200" style="border-radius: 100px;"> 
+        {% else %}
+        
+    {% endif %}
+        {% if user.profile.bio %}
+        <p>Bio: {{ profile.bio }}</p> <br> <br>
+        {% else %}
+    
+    {% endif %}
+        <p>{{user.first_name}}</p>
+        <p>{{user.last_name}}</p>
+        <p>{{user.email}}</p>
+    </div>
+
+   
+</center>
+</div>
+</body>
+</html>

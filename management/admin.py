@@ -3,3 +3,4 @@ from .models import *
 
 admin.site.register(Organization)
 admin.site.register(Role)
+admin.site.register(Profile)

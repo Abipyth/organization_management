@@ -21,4 +21,12 @@ class Role(models.Model):
 User.add_to_class('organization', models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True))
 User.add_to_class('roles', models.ManyToManyField(Role, blank=True))
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    bio = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
 

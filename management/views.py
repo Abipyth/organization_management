@@ -325,22 +325,28 @@ def role_list(request, org_id):
 @login_required
 def user_list(request, org_id):
     organization = get_object_or_404(Organization, id=org_id)
-    
+    profile=request.user.profile
+    # Loop through users and fetch their corresponding profile
     users = User.objects.filter(organization=organization).prefetch_related('roles')
     is_super_admin = request.user.groups.filter(name='super admin').exists()
     is_admin = request.user.groups.filter(name='admin').exists()
-    context = {'users': users, 
-               'organization': organization, 
-               'is_super_admin': is_super_admin,
-                'is_admin': is_admin,}
+
+    context = {
+        'organization': organization,
+        'is_super_admin': is_super_admin,
+        'is_admin': is_admin,
+        'profile':profile,
+        'users':users,
+    }
     return render(request, 'users_list.html', context)
+
 ## Update users in organizations
 @login_required
 @user_passes_test(lambda u: is_superadmin(u) or is_admin(u))
 def user_update(request, user_id):
     user = get_object_or_404(User, id=user_id)
     organization = user.organization
-
+    profile=request.user.profile
     if is_admin(request.user) and request.user.organization != organization:
         messages.info(request, 'You do not have permission to update this user.')
         return redirect('organization_list')
@@ -350,20 +356,25 @@ def user_update(request, user_id):
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         role = request.POST.get('role')
+        bio=request.POST.get('bio')
+        avatar=request.FILES.get('avatar')
 
         if request.user:
             user.first_name = first_name
             user.last_name = last_name
             user.email = email
             user.role = role
-            user.save()
+            user.profile.bio=bio
+            if avatar:
+                user.profile.avatar=avatar
+            user.save()            
             messages.success(request, 'User updated successfully.')
         else:
             messages.info(request, 'You do not have permission to update this user.')
 
         return redirect('user_list', org_id=organization.id)
 
-    context = {'user': user, 'organization': organization}
+    context = {'user': user, 'organization': organization,'profile': profile}
     return render(request, 'user_update.html', context)
 
 ## delete users in organizations
@@ -452,3 +463,14 @@ class SetNewPWView(View):
             print("last error in saving the new password", str(e))
             return render (request,"set_new_pw.html",context)
         return render (request,"set_new_pw.html",context)
+    
+### profile view
+@login_required
+def profile(request):
+    profile = request.user.profile  # Assuming the Profile is created using a signal
+    user = request.user
+    context = {
+        'profile': profile,
+        'user': user
+    }
+    return render(request, 'user_profile.html', context)

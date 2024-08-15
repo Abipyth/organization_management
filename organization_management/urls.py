@@ -29,4 +29,9 @@ urlpatterns = [
         ### password reset
     path("req_reset_pw", views.ReqResetPWView.as_view(), name="req_reset_pw"),
     path("set_new_pw/<uidb64>/<token>",views.SetNewPWView.as_view(), name="set_new_pw" ),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    #### for profile view
+    path('profile/', views.profile, name='users-profile'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
